@@ -15,11 +15,12 @@ var campgroundSchema = new mongoose.Schema({
 
 var Campground = mongoose.model("Campground", campgroundSchema);
 
-Campground.create({
-  name: "Cuddy Creek",
-  image: "https://images.unsplash.com/photo-1455496231601-e6195da1f841?crop=entropy&dpr=2&fit=crop&fm=jpg&h=625&ixjsv=2.1.0&ixlib=rb-0.3.5&q=50&w=1200",
-  description: "This is a super nice campground but no bathrooms, water or other benefits of modern life."
-});
+//Example on how to create campground. 
+// Campground.create({
+//   name: "Cuddy Creek",
+//   image: "https://images.unsplash.com/photo-1455496231601-e6195da1f841?crop=entropy&dpr=2&fit=crop&fm=jpg&h=625&ixjsv=2.1.0&ixlib=rb-0.3.5&q=50&w=1200",
+//   description: "This is a super nice campground but no bathrooms, water or other benefits of modern life."
+// });
 
 //Used this array before I set up the mongodb.
 // var campgrounds = [
@@ -45,7 +46,7 @@ app.get("/campgrounds", function(req,res) {
     if(err){
       console.log(err);
     }else {
-      res.render("campgrounds", {campgrounds: allCampgrounds});
+      res.render("index", {campgrounds: allCampgrounds});
     }
   });
 
@@ -63,7 +64,8 @@ app.post("/campgrounds", function(req,res){
   //get data from form and add to campgrounds array
   var name = req.body.name;
   var image = req.body.image; 
-  var newCampground = {name:name, image: image};
+  var desc = req.body.description;
+  var newCampground = {name:name, image: image, description: desc};
 
   //creating a new campground and save to DB 
   Campground.create(newCampground, function(err, newly) {
@@ -87,7 +89,16 @@ app.get("/campgrounds/new", function(req,res) {
 //show request, the new route needs to be first.
 app.get("/campgrounds/:id", function(req, res) {
   //find the campground with provided id, show campground
-  res.send("This will be the show page one day!");
+  Campground.findById(req.params.id, function(err, foundCampground) {
+    if(err){
+      console.log(err);
+    }else{
+      res.render("show", {campground: foundCampground});
+    }
+  });
+  req.params.id
+  //res.send("This will be the show page one day!");
+
 });
 
 
