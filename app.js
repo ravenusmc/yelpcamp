@@ -75,7 +75,7 @@ app.get("/campgrounds/new", function(req,res) {
 //show request, the new route needs to be first.
 app.get("/campgrounds/:id", function(req, res) {
   //find the campground with provided id, show campground
-  Campground.findById(req.params.id, function(err, foundCampground) {
+  Campground.findById(req.params.id).populate("comments").exec(function(err, foundCampground) {
     if(err){
       console.log(err);
     }else{
