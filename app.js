@@ -32,7 +32,7 @@ app.get("/campgrounds", function(req,res) {
     if(err){
       console.log(err);
     }else {
-      res.render("index", {campgrounds: allCampgrounds});
+      res.render("campgrounds/index", {campgrounds: allCampgrounds});
     }
   });
 
@@ -69,7 +69,7 @@ app.post("/campgrounds", function(req,res){
 });
 
 app.get("/campgrounds/new", function(req,res) {
-  res.render("new.ejs");
+  res.render("campgrounds/new");
 });
 
 //show request, the new route needs to be first.
@@ -79,13 +79,25 @@ app.get("/campgrounds/:id", function(req, res) {
     if(err){
       console.log(err);
     }else{
-      res.render("show", {campground: foundCampground});
+      res.render("campgrounds/show", {campground: foundCampground});
     }
   });
   req.params.id
   //res.send("This will be the show page one day!");
-
 });
+
+///////////////////// Comments Routes 
+
+app.get("/campgrounds/:id/comments/new", function(req,res){
+  //Find campground by id
+  Campground.findById(req.params.id, function(err, campground) {
+    if(err){
+      console.log(err);
+    }else {
+      res.render("comments/new", {campground: campground});
+    }
+  })
+})
 
 
 //2. I then added this to get the server running.
