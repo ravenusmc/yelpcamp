@@ -6,6 +6,7 @@ var bodyParser = require("body-Parser");
 var mongoose = require("mongoose");
 var Campground = require("./models/campground");
 var seedDB = require("./seeds");
+var Comment = require("./models/comment")
 
 seedDB();
 mongoose.connect("mongodb://localhost/yelp_camp");
@@ -20,6 +21,7 @@ mongoose.connect("mongodb://localhost/yelp_camp");
 app.use(bodyParser.urlencoded({extended: true}));
 //4. I then added this to see my ejs pages at the routes below. 
 app.set("view engine", "ejs");
+app.use(express.static(__dirname + "/public"));
 
 //3. This is for the landing page. 
 app.get("/", function(req,res) {
@@ -86,7 +88,7 @@ app.get("/campgrounds/:id", function(req, res) {
   //res.send("This will be the show page one day!");
 });
 
-///////////////////// Comments Routes 
+///////////////////// Comments Routes //////////////////
 
 app.get("/campgrounds/:id/comments/new", function(req,res){
   //Find campground by id
@@ -97,8 +99,27 @@ app.get("/campgrounds/:id/comments/new", function(req,res){
       res.render("comments/new", {campground: campground});
     }
   })
-})
+});
 
+app.post("/campgrounds/:id/comments", function(req,res) {
+  //look up campground using id
+  Campground.findById(req.params.id, function(err, campground){
+    if(err){
+      console.log(err);
+      res.redirect("/campgrounds");
+    }else {
+      Comment.create(req.body.comment, function(err,comment){
+        if(err){
+          console.log(err);
+        } else {
+          campground.comments.push(comment);
+          campground.save();
+          res.redirect('/campgrounds/'+ campground._id);
+        }
+      });
+    }
+  });
+});
 
 //2. I then added this to get the server running.
 app.listen(3000, function() {
