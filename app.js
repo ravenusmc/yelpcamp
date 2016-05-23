@@ -22,6 +22,8 @@ app.use(require("express-session")({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
+
+//Authentication method
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
@@ -105,7 +107,7 @@ app.get("/campgrounds/:id", function(req, res) {
 
 ///////////////////// Comments Routes //////////////////
 
-app.get("/campgrounds/:id/comments/new", function(req,res){
+app.get("/campgrounds/:id/comments/new", isLoggedIn, function(req,res){
   //Find campground by id
   Campground.findById(req.params.id, function(err, campground) {
     if(err){
@@ -116,7 +118,7 @@ app.get("/campgrounds/:id/comments/new", function(req,res){
   })
 });
 
-app.post("/campgrounds/:id/comments", function(req,res) {
+app.post("/campgrounds/:id/comments", isLoggedIn, function(req,res) {
   //look up campground using id
   Campground.findById(req.params.id, function(err, campground){
     if(err){
@@ -155,6 +157,33 @@ app.post("/register", function(req,res){
     });
   });
 });
+
+//Login form-show it
+app.get("/login", function(req,res){
+  res.render("login");
+});
+
+//Login route
+app.post("/login", passport.authenticate("local", 
+  {
+      successRedirect: "/campgrounds", 
+      failureRedirect: "/login" 
+  }), function(req,res){
+});
+
+//Log Out Route
+app.get("/logout", function(req,res){
+  req.logout();
+  res.redirect("/campgrounds");
+});
+
+//Middleware-Used for forcing people to log in! 
+function isLoggedIn(req, res, next){
+  if(req.isAuthenticated()){
+    return next();
+  }
+  res.redirect("/login");
+}
 
 //2. I then added this to get the server running.
 app.listen(3000, function() {
