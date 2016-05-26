@@ -21,7 +21,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 //4. I then added this to see my ejs pages at the routes below. 
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));
-seedDB();
+//Seed the Databse
+//seedDB();
 
 //PASSPORT CONFIG
 app.use(require("express-session")({

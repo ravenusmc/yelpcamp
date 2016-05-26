@@ -15,6 +15,7 @@ router.get("/campgrounds/:id/comments/new", isLoggedIn, function(req,res){
   })
 });
 
+//Comments Create
 router.post("/campgrounds/:id/comments", isLoggedIn, function(req,res) {
   //look up campground using id
   Campground.findById(req.params.id, function(err, campground){
@@ -26,6 +27,11 @@ router.post("/campgrounds/:id/comments", isLoggedIn, function(req,res) {
         if(err){
           console.log(err);
         } else {
+          //Add usernmae and id to comment
+          comment.author.id = req.user._id;
+          comment.author.username = req.user.username;
+          //Save comment
+          comment.save()
           campground.comments.push(comment);
           campground.save();
           res.redirect('/campgrounds/'+ campground._id);
