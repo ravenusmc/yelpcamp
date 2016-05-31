@@ -10,6 +10,7 @@ var Comment = require("./models/comment");
 var passport = require("passport");
 var LocalStrategy = require("passport-local");
 var User = require("./models/user");
+var methodOverride = require('method-override');
 
 //routes
 var commentRoutes     = require("./routes/comments"),
@@ -21,6 +22,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 //4. I then added this to see my ejs pages at the routes below. 
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));
+app.use(methodOverride("_method"));
 //Seed the Databse
 //seedDB();
 
